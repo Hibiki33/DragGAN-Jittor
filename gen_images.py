@@ -7,7 +7,7 @@ import numpy as np
 import jittor as jt
 from networks_stylegan3 import Generator
 from utils import save_img, EasyDict
-from imageio import imread,imsave
+from imageio import imread, imsave
 
 import legacy
 

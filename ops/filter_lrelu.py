@@ -1,7 +1,7 @@
 import os
 import jittor as jt
 import numpy as np
-from .upfird2d import Upfirdn2d
+from .upfirdn2d import Upfirdn2d
 import time
 
 jt.flags.use_cuda = 1
