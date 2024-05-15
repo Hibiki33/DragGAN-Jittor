@@ -1,15 +1,17 @@
-## Jittor Version of DragGAN
+# Jittor Version of DragGAN
+
+A Jittor implementation of [Drag Your GAN: Interactive Point-based Manipulation on the Generative Image Manifold](https://arxiv.org/abs/2305.10973).
 
 ## Usage
 
-## DragGAN
+### DragGAN
 
 Run DragGAN GUI:
 ```bash
 python visualizer_drag.py ./weights/jt_stylegan3_ffhq_weights_t.pkl
 ```
 
-## StyleGAN3 
+### StyleGAN3 
 
 Randomly sample face results:
 ```
