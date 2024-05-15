@@ -1,10 +1,13 @@
 ## Jittor Version of DragGAN
 
-## todo
+## Usage
 
-- [x] Prepare the environment
-- [x] Running StyleGAN3 on Jittor
-- [ ] Add DragGAN implementation
+## DragGAN
+
+Run DragGAN GUI:
+```bash
+python visualizer_drag.py ./weights/jt_stylegan3_ffhq_weights_t.pkl
+```
 
 ## StyleGAN3 
 
