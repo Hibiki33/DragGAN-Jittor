@@ -63,18 +63,18 @@ class Renderer:
         self._pinned_bufs   = dict()    # {(shape, dtype): torch.Tensor, ...}
         self._cmaps         = dict()    # {name: torch.Tensor, ...}
         self._is_timing     = False
-        if not disable_timing:
-            self._start_event   = torch.cuda.Event(enable_timing=True)
-            self._end_event     = torch.cuda.Event(enable_timing=True)
+        # if not disable_timing:
+        #     self._start_event   = torch.cuda.Event(enable_timing=True)
+        #     self._end_event     = torch.cuda.Event(enable_timing=True)
         self._disable_timing = disable_timing
         self._net_layers    = dict()    # {cache_key: [dnnlib.EasyDict, ...], ...}
 
     def render(self, **args):
-        if self._disable_timing:
-            self._is_timing = False
-        else:
-            self._start_event.record(torch.cuda.current_stream(self._device))
-            self._is_timing = True
+        # if self._disable_timing:
+        #     self._is_timing = False
+        # else:
+        #     self._start_event.record(torch.cuda.current_stream(self._device))
+        #     self._is_timing = True
         res = EasyDict()
         try:
             init_net = False
@@ -100,13 +100,15 @@ class Renderer:
             self._render_drag_impl(res, **args)
         except:
             res.error = CapturedException()
-        if not self._disable_timing:
-            self._end_event.record(torch.cuda.current_stream(self._device))
+        # if not self._disable_timing:
+        #     self._end_event.record(torch.cuda.current_stream(self._device))
         if 'image' in res:
-            res.image = self.to_cpu(res.image).detach().numpy()
+            # res.image = self.to_cpu(res.image).detach().numpy()
+            res.image = res.image.detach().numpy()
             res.image = add_watermark_np(res.image, 'AI Generated')
         if 'stats' in res:
-            res.stats = self.to_cpu(res.stats).detach().numpy()
+            # res.stats = self.to_cpu(res.stats).detach().numpy()
+            res.stats = res.stats.detach().numpy()
         if 'error' in res:
             res.error = str(res.error)
         # if 'stop' in res and res.stop:
@@ -176,8 +178,8 @@ class Renderer:
     # def to_device(self, buf):
     #     return self._get_pinned_buf(buf).copy_(buf).to(self._device)
 
-    def to_cpu(self, buf):
-        return self._get_pinned_buf(buf).copy_(buf).clone()
+    # def to_cpu(self, buf):
+    #     return self._get_pinned_buf(buf).copy_(buf).clone()
 
     def _ignore_timing(self):
         self._is_timing = False
@@ -341,9 +343,10 @@ class Renderer:
                     right = min(point[1] + r + 1, w)
                     feat_patch = feat_resize[:,:,up:down,left:right]
                     L2 = jt.norm(feat_patch - self.feat_refs[j].reshape(1,-1,1,1), dim=1)
-                    _, idx = jt.min(L2.view(1,-1), -1)
+                    idx, _ = jt.argmin(L2.view(1,-1), -1)
                     width = right - left
                     point = [idx.item() // width + up, idx.item() % width + left]
+                    # point = [idx % width + left, idx // width + up]
                     points[j] = point
 
             res.points = [[point[0], point[1]] for point in points]
@@ -376,7 +379,8 @@ class Renderer:
             loss += reg * jt.nn.l1_loss(ws, self.w0)  # latent code regularization
             if not res.stop:
                 self.w_optim.zero_grad()
-                loss.backward()
+                # loss.backward()
+                self.w_optim.backward(loss)
                 self.w_optim.step()
 
         # Scale and convert to uint8.

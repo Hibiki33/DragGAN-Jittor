@@ -472,21 +472,28 @@ class SynthesisNetwork(jt.nn.Module):
             setattr(self, name, layer)
             self.layer_names.append(name)
 
-    def execute(self, ws, **layer_kwargs):
+    def execute(self, ws, return_feature=False, **layer_kwargs):
         #misc.assert_shape(ws, [None, self.num_ws, self.w_dim])
         ws = jt.misc.unbind(ws, dim=1)
+
+        feat = []
 
         # Execute layers.
         x = self.input(ws[0])
         for name, w in zip(self.layer_names, ws[1:]):
             x = getattr(self, name)(x, w, **layer_kwargs)
+            feat.append(x)
         if self.output_scale != 1:
             x = x * self.output_scale
 
         # Ensure correct shape and dtype.
         #misc.assert_shape(x, [None, self.img_channels, self.img_resolution, self.img_resolution])
         x = x.astype(jt.float32)
-        return x
+        # return x
+        if return_feature:
+            return x, feat
+        else:
+            return x
 
 class Generator(jt.nn.Module):
     def __init__(self,
@@ -508,9 +515,20 @@ class Generator(jt.nn.Module):
         self.num_ws = self.synthesis.num_ws
         self.mapping = MappingNetwork(z_dim=z_dim, c_dim=c_dim, w_dim=w_dim, num_ws=self.num_ws, **mapping_kwargs)
 
-    def execute(self, z, c, truncation_psi=1, truncation_cutoff=None, update_emas=False, **synthesis_kwargs):
-        ws = self.mapping(z, c, truncation_psi=truncation_psi, truncation_cutoff=truncation_cutoff, update_emas=update_emas)
-        img = self.synthesis(ws, update_emas=update_emas, **synthesis_kwargs)
-        return img
+    def execute(self, z, c, truncation_psi=1, truncation_cutoff=None, update_emas=False, input_is_w=False, return_feature=False, **synthesis_kwargs):
+        # ws = self.mapping(z, c, truncation_psi=truncation_psi, truncation_cutoff=truncation_cutoff, update_emas=update_emas)
+        if input_is_w:
+            ws = z
+            if ws.dim() == 2:
+                ws = ws.unsqueeze(1).repeat([1, self.num_ws, 1])
+        else:
+            ws = self.mapping(z, c, truncation_psi=truncation_psi, truncation_cutoff=truncation_cutoff, update_emas=update_emas)
+
+        if return_feature:
+            img, feat = self.synthesis(ws, update_emas=update_emas, return_feature=return_feature, **synthesis_kwargs)
+            return img, feat
+        else:
+            img = self.synthesis(ws, update_emas=update_emas, return_feature=return_feature, **synthesis_kwargs)
+            return img
 
 
