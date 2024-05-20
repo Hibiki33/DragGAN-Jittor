@@ -11,6 +11,16 @@ Run DragGAN GUI:
 python visualizer_drag.py ./weights/jt_stylegan3_ffhq_weights_t.pkl
 ```
 
+For Gradio Usage:
+```bash
+python visualizer_drag_gradio.py
+```
+If gradio is running on a remote server, locally enter the command:
+```bash
+# SSH tunnel
+ssh -CNg -L 7860:127.0.0.1:7860 <username>@<ipaddr> -p <sshport> 
+```
+
 ### StyleGAN3 
 
 Randomly sample face results:
