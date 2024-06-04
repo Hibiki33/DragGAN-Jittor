@@ -872,4 +872,4 @@ gr.close_all()
 app.queue(concurrency_count=3, max_size=20)
 app.launch(share=args.share, 
            server_name="0.0.0.0" if args.listen else "127.0.0.1",
-           server_port="7860")
+           server_port=7860)
