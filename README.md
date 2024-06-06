@@ -2,6 +2,20 @@
 
 A Jittor implementation of [Drag Your GAN: Interactive Point-based Manipulation on the Generative Image Manifold](https://arxiv.org/abs/2305.10973).
 
+## Installation
+
+### Requirements
+
+```bash
+pip install -r requirements.txt
+```
+
+### Pretrained Models
+
+The pretrained model of stylegan3 can be downloaded from [here](https://drive.google.com/drive/folders/1Gz-MUclZVSD2cAuyVsIIUoNDiXh3nmzw).
+
+If you want to evaluate the DragGAN, dlib's face landmark model is required. You can download it from [here](http://dlib.net/files/).
+
 ## Usage
 
 ### DragGAN
@@ -26,6 +40,14 @@ ssh -CNg -L 7860:127.0.0.1:7860 <username>@<ipaddr> -p <sshport>
 Randomly sample face results:
 ```
 python gen_images.py --outdir=output --trunc=1 --seeds=2 --network=./weights/jt_stylegan3_ffhq_weights_t.pkl
+```
+
+### Evaluation
+
+Since the author did not provide the evaluation code, I implemented it myself with the paper's description. 
+
+```bash
+python eval_drag.py
 ```
 
 ## Acknowledgements

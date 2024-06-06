@@ -164,3 +164,20 @@ cython_debug/
 
 output/
 weights/
+
+*.bz2
+*.gz
+*.zip
+*.tar
+*.tar.gz
+*.7z
+*.rar
+*.xz
+
+*.dat
+
+*.jpg
+*.jpeg
+*.png
+
+*.json

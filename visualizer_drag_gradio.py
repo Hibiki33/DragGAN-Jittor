@@ -492,7 +492,7 @@ with gr.Blocks() as app:
             )
         else:
 
-            # Transform the points into torch tensors
+            # Transform the points into tensors
             for key_point, point in global_state["points"].items():
                 try:
                     p_start = point.get("start_temp", point["start"])
@@ -527,7 +527,7 @@ with gr.Blocks() as app:
                 if global_state["temporal_params"]["stop"]:
                     break
 
-                # do drage here!
+                # do drag here!
                 renderer._render_drag_impl(
                     global_state['generator_params'],
                     p_to_opt,  # point
